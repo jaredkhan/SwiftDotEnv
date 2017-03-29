@@ -8,15 +8,10 @@ import Foundation
 
 
 public struct DotEnv {
-
-    public init(withFile filename: String = ".env") {
-        loadDotEnvFile(filename: filename)
-    }
-
     ///
     /// Load .env file and put all the variables into the environment
     ///
-    public func loadDotEnvFile(filename: String) {
+    static public func load(filename: String) {
 
         let path = getAbsolutePath(relativePath: "/\(filename)", useFallback: false)
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
@@ -53,7 +48,7 @@ public struct DotEnv {
     ///
     /// Return the value for `name` in the environment, returning the default if not present
     ///
-    public func get(_ name: String) -> String? {
+    public static func get(_ name: String) -> String? {
         guard let value = getenv(name) else { 
             return nil
         }
@@ -63,7 +58,7 @@ public struct DotEnv {
     ///
     /// Return the integer value for `name` in the environment, returning default if not present
     ///
-    public func getAsInt(_ name: String) -> Int? {
+    public static func getAsInt(_ name: String) -> Int? {
         guard let value = get(name) else {
             return nil
         }
@@ -75,7 +70,7 @@ public struct DotEnv {
     ///
     /// Note that the value is lowercaed and must be "true", "yes" or "1" to be considered true.
     ///
-    public func getAsBool(_ name: String) -> Bool? {
+    public static func getAsBool(_ name: String) -> Bool? {
         guard let value = get(name) else {
             return nil
         }
@@ -88,18 +83,8 @@ public struct DotEnv {
         return false
     }
 
-    ///
-    /// Array subscript access to environment variables as it's cleaner
-    ///
-    public subscript(key: String) -> String? {
-        get {
-            return get(key)
-        }
-    }
-
-
     // Open
-    public func all() -> [String: String] {
+    public static func all() -> [String: String] {
         return ProcessInfo.processInfo.environment
     }
 
@@ -107,7 +92,7 @@ public struct DotEnv {
     /// Determine route path of project. This assumes we're installed via SwiftPM and that
     /// this library is in the Packages subdirectory, so it's a bit fragile!
     ///
-    private func getAbsolutePath(relativePath: String, useFallback: Bool = true) -> String? {
+    private static func getAbsolutePath(relativePath: String, useFallback: Bool = true) -> String? {
         let thisFile = #file
         let components = thisFile.characters.split(separator: "/").map(String.init)
         let toRootDir = components[0..<components.count - 5]
