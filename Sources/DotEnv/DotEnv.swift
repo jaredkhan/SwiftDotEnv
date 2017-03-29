@@ -11,7 +11,7 @@ public struct DotEnv {
     ///
     /// Load .env file and put all the variables into the environment
     ///
-    static public func load(filename: String) {
+    static public func load(filename: String = ".env") {
 
         let path = getAbsolutePath(relativePath: "/\(filename)")
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
